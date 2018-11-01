@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import xlsxwriter, sys, os
+import xlsxwriter, sys, os, numpy
+import pandas as pd
 from pgget import Connection
 cnn = Connection()
 
@@ -264,15 +265,33 @@ class KurumTablosu:
                     count += 1
                     pd_allDatum[en] = [datum[0],datum[1],count]
 
-        last_list = []
+        last_pd = []
+        last_num = []
 
         for en,row in enumerate(pd_allDatum):
             if row[2] != 0:
-                last_list.append(row)
+                p = cnn.getsinglekoddata('kod_ek_2_projeksiyon', 'kod', 'objectid='+str(row[0])).decode('utf-8')
+                d = cnn.getsinglekoddata('kod_ek_2_datum', 'kod', 'objectid='+str(row[1])).decode('utf-8')
+                c = row[2]
+                last_pd.append([p,d,c])
+                last_num.append(row)
+
+        result = {}
         
+        for row in last_pd:
+            if row[0] in result:
+                result[row[0]].append((row[1], row[2]))
+            else:
+                result[row[0]] = [(row[1], row[2])]
+        
+        self.result =  result
 
-        print last_list
-
+        # data = numpy.array(last_pd)
+        self.df = None
+        # if len(last_pd) > 0:
+        #     self.df = pd.DataFrame(data=data[0:,2:],index=data[1:,0],columns=data[0:,0:])
+        
+        
 
 
     def save_excel(self):
@@ -702,53 +721,78 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         worksheet.insert_chart('D1', chart3, {'x_offset': 0, 'y_offset': 0})
     
-    # Basic Graph Projeksiyon ve Datum
+# Basic Graph Projeksiyon ve Datum
     def projeksiyon_datum(self):
         wb = self.wb
         ws = wb.add_worksheet(u'ProjeksiyonDatum')
 
         bold = wb.add_format({'bold': 1})
+        result = self.result
+        datum_position = {}
+        max_colunm = 0
+        columns=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+        cur_row_num = 1
+        for en,p in enumerate(result):
+            cell = columns[en+1] + '1'
+            ws.write(cell, p)
+            if max_colunm < en+1:
+                max_colunm = en+1
+            datums = result[p]
+            for d in datums:
+                datum = d[0]
+                count = d[1]
+                if datum not in datum_position:
+                    datum_position[datum] = cur_row_num
+                    cur_row_num += 1
+                    ws.write('A'+str(cur_row_num), datum)
+                    ws.write(columns[en+1]+str(cur_row_num), count)
+                else:
+                    ws.write('A'+str(datum_position[datum]+1), datum)
+                    ws.write(columns[en+1]+str(datum_position[datum]+1), count)
+            
+        # # Add the worksheet data that the charts will refer to.
+        # headings = ['Veri', u'Dijital Veri', u'Basılı Veri']
+        # data = [
+        #     ['NCZ, DWG', 'Raster', u'Veritabanı', 'Bilinmiyor'],
+        #     [self.cad, self.raster_dij, self.vt, self.vf_bilinmiyor],
+        #     [None, self.raster_bas, None, None],
+        # ]
 
-        # Add the worksheet data that the charts will refer to.
-        headings = ['Veri', u'Dijital Veri', u'Basılı Veri']
-        data = [
-            ['NCZ, DWG', 'Raster', u'Veritabanı', 'Bilinmiyor'],
-            [self.cad, self.raster_dij, self.vt, self.vf_bilinmiyor],
-            [None, self.raster_bas, None, None],
-        ]
+        # ws.write_row('A1', headings, bold)
+        # ws.write_column('A2', data[0])
+        # ws.write_column('B2', data[1])
+        # ws.write_column('C2', data[2])
+        # #
+        # # Create a stacked chart sub-type.
+        # #
+        if max_colunm > 0:    
+            chart2 = wb.add_chart({'type': 'column', 'subtype': 'stacked'})
 
-        ws.write_row('A1', headings, bold)
-        ws.write_column('A2', data[0])
-        ws.write_column('B2', data[1])
-        ws.write_column('C2', data[2])
-        #
-        # Create a stacked chart sub-type.
-        #
-        chart2 = wb.add_chart({'type': 'column', 'subtype': 'stacked'})
+            # Configure the first series.
 
-        # Configure the first series.
-        chart2.add_series({
-            'name':       '=ProjeksiyonDatum!$B$1',
-            'categories': '=ProjeksiyonDatum!$A$2:$A$5',
-            'values':     '=ProjeksiyonDatum!$B$2:$B$5',
-            'data_labels': {'value': True},
-        })
+            for x in range(max_colunm):
+                chart2.add_series({
+                    'name':         '=ProjeksiyonDatum!$'+columns[x+1]+'1',
+                    'categories':   '=ProjeksiyonDatum!$A$2:$A$'+str(cur_row_num),
+                    'values':       '=ProjeksiyonDatum!$'+columns[x+1]+'2:$'+columns[x+1]+'$'+str(cur_row_num),
+                    'data_labels': {'value': True},
+                })
 
-        # Configure second series.
-        chart2.add_series({
-            'name':       '=ProjeksiyonDatum!$C$1',
-            'categories': '=ProjeksiyonDatum!$A$2:$A$5',
-            'values':     '=ProjeksiyonDatum!$C$2:$C$5',
-            'data_labels': {'value': True},
-        })
+            # # Configure second series.
+            # chart2.add_series({
+            #     'name':       '=ProjeksiyonDatum!$C$1',
+            #     'categories': '=ProjeksiyonDatum!$A$2:$A$5',
+            #     'values':     '=ProjeksiyonDatum!$C$2:$C$5',
+            #     'data_labels': {'value': True},
+            # })
 
-        # Add a chart title and some axis labels.
-        chart2.set_title ({'name': u'Projeksiyon ve Datum'})
-        # chart2.set_x_axis({'name': 'Test number'})
-        chart2.set_y_axis({'name': u'Adet'})
+            # Add a chart title and some axis labels.
+            chart2.set_title ({'name': u'Projeksiyon ve Datum'})
+            # chart2.set_x_axis({'name': 'Test number'})
+            chart2.set_y_axis({'name': u'Adet'})
 
-        # Set an Excel chart style.
-        chart2.set_style(12)
+            # # Set an Excel chart style.
+            chart2.set_style(12)
 
-        # Insert the chart into the worksheet (with an offset).
-        ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})
+            # # Insert the chart into the worksheet (with an offset).
+            ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})
