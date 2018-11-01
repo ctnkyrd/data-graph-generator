@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import xlsxwriter
+import xlsxwriter, sys, os
 from pgget import Connection
 cnn = Connection()
 
@@ -243,6 +243,37 @@ class KurumTablosu:
         if self.wfs_n == 0:
             self.wfs_n = None
         
+        # projeksiyon ve datum
+        self.projeksiyonDatum = []
+        allDatum = cnn.getlistofdata('kod_ek_2_projeksiyon p, kod_ek_2_datum d', 'p.objectid, d.objectid', 'true')
+        
+        pd_allDatum = [[row[0],row[1],0] for row in allDatum]
+
+
+        pd_projeksiyonDatum = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, projeksiyon, datum',
+                                    'geodurum = true and katman_durumu is true and veri_tipi = 1 and ek_2='+str(self.ek2))
+        list_projeksiyon_datum = []
+
+        print self.k_adi.decode('utf-8')
+
+
+        for row in pd_projeksiyonDatum:
+            for en,datum in enumerate(pd_allDatum):
+                if row[1] == datum[0] and row[2] == datum[1]:
+                    count = datum[2]
+                    count += 1
+                    pd_allDatum[en] = [datum[0],datum[1],count]
+
+        last_list = []
+
+        for en,row in enumerate(pd_allDatum):
+            if row[2] != 0:
+                last_list.append(row)
+        
+
+        print last_list
+
+
 
     def save_excel(self):
         wb = self.wb
@@ -670,3 +701,54 @@ class KurumTablosu:
 
         # Insert the chart into the worksheet (with an offset).
         worksheet.insert_chart('D1', chart3, {'x_offset': 0, 'y_offset': 0})
+    
+    # Basic Graph Projeksiyon ve Datum
+    def projeksiyon_datum(self):
+        wb = self.wb
+        ws = wb.add_worksheet(u'ProjeksiyonDatum')
+
+        bold = wb.add_format({'bold': 1})
+
+        # Add the worksheet data that the charts will refer to.
+        headings = ['Veri', u'Dijital Veri', u'Basılı Veri']
+        data = [
+            ['NCZ, DWG', 'Raster', u'Veritabanı', 'Bilinmiyor'],
+            [self.cad, self.raster_dij, self.vt, self.vf_bilinmiyor],
+            [None, self.raster_bas, None, None],
+        ]
+
+        ws.write_row('A1', headings, bold)
+        ws.write_column('A2', data[0])
+        ws.write_column('B2', data[1])
+        ws.write_column('C2', data[2])
+        #
+        # Create a stacked chart sub-type.
+        #
+        chart2 = wb.add_chart({'type': 'column', 'subtype': 'stacked'})
+
+        # Configure the first series.
+        chart2.add_series({
+            'name':       '=ProjeksiyonDatum!$B$1',
+            'categories': '=ProjeksiyonDatum!$A$2:$A$5',
+            'values':     '=ProjeksiyonDatum!$B$2:$B$5',
+            'data_labels': {'value': True},
+        })
+
+        # Configure second series.
+        chart2.add_series({
+            'name':       '=ProjeksiyonDatum!$C$1',
+            'categories': '=ProjeksiyonDatum!$A$2:$A$5',
+            'values':     '=ProjeksiyonDatum!$C$2:$C$5',
+            'data_labels': {'value': True},
+        })
+
+        # Add a chart title and some axis labels.
+        chart2.set_title ({'name': u'Projeksiyon ve Datum'})
+        # chart2.set_x_axis({'name': 'Test number'})
+        chart2.set_y_axis({'name': u'Adet'})
+
+        # Set an Excel chart style.
+        chart2.set_style(12)
+
+        # Insert the chart into the worksheet (with an offset).
+        ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})

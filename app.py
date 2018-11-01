@@ -18,4 +18,5 @@ for i in kurum:
     a.vk_tematik() 
     a.vk_guncel()
     a.vk_ogc()
+    a.projeksiyon_datum()
     a.save_excel() 
