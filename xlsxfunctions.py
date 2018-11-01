@@ -229,6 +229,7 @@ class KurumTablosu:
             if row[2]: 
                 self.wfs += 1
             self.total +=1
+        
         if self.wms == 0:
             self.wms = None
             self.wms_n = self.total
@@ -236,7 +237,7 @@ class KurumTablosu:
             self.wms_n = self.total - self.wms
         if self.wfs == 0:
             self.wfs = None
-            self.wms_n = self.total
+            self.wfs_n = self.total
         else:
             self.wfs_n = self.total - self.wfs
         if self.wms_n == 0:
@@ -255,7 +256,7 @@ class KurumTablosu:
                                     'geodurum = true and katman_durumu is true and veri_tipi = 1 and ek_2='+str(self.ek2))
         list_projeksiyon_datum = []
 
-        print self.k_adi.decode('utf-8')
+        # print self.k_adi.decode('utf-8')
 
 
         for row in pd_projeksiyonDatum:
@@ -291,9 +292,35 @@ class KurumTablosu:
         # if len(last_pd) > 0:
         #     self.df = pd.DataFrame(data=data[0:,2:],index=data[1:,0],columns=data[0:,0:])
         
+         # Metaveri Durumu
+
+        metaveri = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, mv_metaveri_var, mv_standart',
+                                    'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
+        self.tucbs_mv = 0
+        self.kurum_mv = 0
+        self.ulusal_mv = 0
+        self.yok_mv = 0
+
+        for row in metaveri:
+            if row[1]:
+                if row[2] == 1: 
+                    self.tucbs_mv +=1
+                elif row[2] == 2:
+                    self.ulusal_mv +=1 
+                else:
+                    self.kurum_mv += 1
+            else:
+                self.yok_mv += 1
         
+        if self.yok_mv == 0:
+            self.yok_mv = None
 
-
+        if self.tucbs_mv == 0:
+            self.tucbs_mv = None
+        if self.kurum_mv == 0:
+            self.kurum_mv = None
+        if self.ulusal_mv == 0:
+            self.ulusal_mv = None
     def save_excel(self):
         wb = self.wb
         wb.close()
@@ -796,3 +823,68 @@ class KurumTablosu:
 
             # # Insert the chart into the worksheet (with an offset).
             ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})
+
+            # BasicGraph-Metaveri Durumu
+
+# basic graph metaveri
+    def metaveri(self):
+        wb = self.wb
+        ws = wb.add_worksheet(u'MetaveriDurum')
+
+        bold = wb.add_format({'bold': 1})
+
+        # Add the worksheet data that the charts will refer to.
+        headings = [u'TUCBS', u'Ulusal Metaveri Profili', u'Kurum', u'Yok']
+        data = [
+            [u'Var', u'Yok'],
+            [self.tucbs_mv, self.ulusal_mv, self.kurum_mv, None],
+            [None, None, None, self.yok_mv],
+        ]
+
+        ws.write_row('B1', headings, bold)
+        ws.write_row('B2', data[1])
+        ws.write_row('B3', data[2])
+        ws.write_column('A2', data[0])
+        #
+        # Create a stacked chart sub-type.
+        #
+        chart2 = wb.add_chart({'type': 'column', 'subtype': 'stacked'})
+
+        # Configure the first series.
+        chart2.add_series({
+            'name':       '=MetaveriDurum!$B$1',
+            'categories': '=MetaveriDurum!$A$2:$A$3',
+            'values':     '=MetaveriDurum!$B$2:$B$3',
+            'data_labels': {'value': True},
+        })
+
+        # Configure second series.
+        chart2.add_series({
+            'name':       '=MetaveriDurum!$C$1',
+            'categories': '=MetaveriDurum!$A$2:$A$3',
+            'values':     '=MetaveriDurum!$C$2:$C$3',
+            'data_labels': {'value': True},
+        })
+        chart2.add_series({
+            'name':       '=MetaveriDurum!$D$1',
+            'categories': '=MetaveriDurum!$A$2:$A$3',
+            'values':     '=MetaveriDurum!$D$2:$D$3',
+            'data_labels': {'value': True},
+        })
+        chart2.add_series({
+            'name':       '=MetaveriDurum!$E$1',
+            'categories': '=MetaveriDurum!$A$2:$A$3',
+            'values':     '=MetaveriDurum!$E$2:$E$3',
+            'data_labels': {'value': True},
+        })
+
+        # Add a chart title and some axis labels.
+        chart2.set_title ({'name': u'Metaveri'})
+        # chart2.set_x_axis({'name': 'Test number'})
+        chart2.set_y_axis({'name': u'Adet'})
+
+        # Set an Excel chart style.
+        chart2.set_style(12)
+
+        # Insert the chart into the worksheet (with an offset).
+        ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})
