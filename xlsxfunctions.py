@@ -92,7 +92,7 @@ class KurumTablosu:
                 self.vt_eksik += 1
             elif row[1] == 1:
                 self.vt_tam += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vte_bilinmiyor += 1
         if self.vt_eksik == 0:
             self.vt_eksik = None
@@ -111,11 +111,11 @@ class KurumTablosu:
         self.vtm_bilinmiyor = 0
 
         for row in mantiksal_tutarlilik:
-            if row[1] == 2:
+            if row[1] == 1:
                 self.vtm_var += 1
-            elif row[1] == 1:
+            elif row[1] == 2:
                 self.vtm_yok += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vtm_bilinmiyor += 1
         if self.vtm_var == 0:
             self.vtm_var = None
@@ -134,11 +134,11 @@ class KurumTablosu:
         self.vtk_bilinmiyor = 0
 
         for row in vk_konumsal:
-            if row[1] == 2:
+            if row[1] == 1:
                 self.vt_malti += 1
-            elif row[1] == 1:
+            elif row[1] == 2:
                 self.vt_mustu += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vtk_bilinmiyor += 1
         if self.vt_malti == 0:
             self.vt_malti = None
@@ -157,11 +157,11 @@ class KurumTablosu:
         self.vtz_bilinmiyor = 0
 
         for row in vk_zamansal:
-            if row[1] == 2:
+            if row[1] == 1:
                 self.vtz_var += 1
-            elif row[1] == 1:
+            elif row[1] == 2:
                 self.vtz_yok += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vtz_bilinmiyor += 1
         if self.vtz_var == 0:
             self.vtz_var = None
@@ -180,11 +180,11 @@ class KurumTablosu:
         self.vtt_bilinmiyor = 0
 
         for row in vk_tematik:
-            if row[1] == 2:
+            if row[1] == 1:
                 self.vtt_var += 1
-            elif row[1] == 1:
+            elif row[1] == 2:
                 self.vtt_yok += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vtt_bilinmiyor += 1
         if self.vtt_var == 0:
             self.vtt_var = None
@@ -203,11 +203,11 @@ class KurumTablosu:
         self.vtv_bilinmiyor = 0
 
         for row in vk_guncel:
-            if row[1] == 2:
+            if row[1] == 1:
                 self.vt_guncel += 1
-            elif row[1] == 1:
+            elif row[1] == 2:
                 self.vt_guncel_degil += 1
-            elif row[1] == None:
+            elif row[1] == None or row[1] == 3:
                 self.vtv_bilinmiyor += 1
         if self.vt_guncel == 0:
             self.vt_guncel = None
@@ -450,7 +450,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vte_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=VeriEksizlik!$A$1:$B$1',
                 'values':     '=VeriEksizlik!$A$2:$B$2',
@@ -496,7 +496,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vtm_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=MantiksalTutarlilik!$A$1:$B$1',
                 'values':     '=MantiksalTutarlilik!$A$2:$B$2',
@@ -542,7 +542,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vtk_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=KonumsalDogruluk!$A$1:$B$1',
                 'values':     '=KonumsalDogruluk!$A$2:$B$2',
@@ -588,7 +588,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vtz_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=ZamansalDogruluk!$A$1:$B$1',
                 'values':     '=ZamansalDogruluk!$A$2:$B$2',
@@ -634,7 +634,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vtt_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=TematikDogruluk!$A$1:$B$1',
                 'values':     '=TematikDogruluk!$A$2:$B$2',
@@ -680,7 +680,7 @@ class KurumTablosu:
         chart2 = wb.add_chart({'type': 'column'})
 
         # Configure the first series.
-        if self.vt_bilinmiyor == None:
+        if self.vtv_bilinmiyor == None:
             chart2.add_series({
                 'categories': '=VeriGuncelOlmaDurumu!$A$1:$B$1',
                 'values':     '=VeriGuncelOlmaDurumu!$A$2:$B$2',
