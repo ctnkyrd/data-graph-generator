@@ -15,6 +15,7 @@ class KurumTablosu:
         # veri türü
         veriler = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, veri_turu',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
+
         self.vt_dijital = 0
         self.vt_basili = 0
         self.vt_bilinmiyor = 0
@@ -26,6 +27,7 @@ class KurumTablosu:
                 self.vt_basili += 1
             elif row[1] == None:
                 self.vt_bilinmiyor += 1
+                
         if self.vt_dijital == 0:
             self.vt_dijital = None
         if self.vt_basili == 0:
@@ -83,7 +85,7 @@ class KurumTablosu:
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
         self.vt_eksik = 0
         self.vt_tam = 0
-        self.vt_bilinmiyor = 0
+        self.vte_bilinmiyor = 0
 
         for row in veri_eksiksizlik:
             if row[1] == 2:
@@ -91,35 +93,36 @@ class KurumTablosu:
             elif row[1] == 1:
                 self.vt_tam += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
+                self.vte_bilinmiyor += 1
         if self.vt_eksik == 0:
             self.vt_eksik = None
         if self.vt_tam == 0:
             self.vt_tam = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+        if self.vte_bilinmiyor == 0:
+            self.vte_bilinmiyor = None
+
 
         # mantıksal tutarlılık 
      
         mantiksal_tutarlilik = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_mantiksal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
-        self.vt_var = 0
-        self.vt_yok = 0
-        self.vt_bilinmiyor = 0
+        self.vtm_var = 0
+        self.vtm_yok = 0
+        self.vtm_bilinmiyor = 0
 
         for row in mantiksal_tutarlilik:
             if row[1] == 2:
-                self.vt_var += 1
+                self.vtm_var += 1
             elif row[1] == 1:
-                self.vt_yok += 1
+                self.vtm_yok += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
-        if self.vt_var == 0:
-            self.vt_var = None
-        if self.vt_yok == 0:
-            self.vt_yok = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+                self.vtm_bilinmiyor += 1
+        if self.vtm_var == 0:
+            self.vtm_var = None
+        if self.vtm_yok == 0:
+            self.vtm_yok = None
+        if self.vtm_bilinmiyor == 0:
+            self.vtm_bilinmiyor = None
 
 
         # konumsal doğruluk
@@ -128,7 +131,7 @@ class KurumTablosu:
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
         self.vt_malti = 0
         self.vt_mustu = 0
-        self.vt_bilinmiyor = 0
+        self.vtk_bilinmiyor = 0
 
         for row in vk_konumsal:
             if row[1] == 2:
@@ -136,59 +139,59 @@ class KurumTablosu:
             elif row[1] == 1:
                 self.vt_mustu += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
+                self.vtk_bilinmiyor += 1
         if self.vt_malti == 0:
             self.vt_malti = None
         if self.vt_mustu == 0:
             self.vt_mustu = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+        if self.vtk_bilinmiyor == 0:
+            self.vtk_bilinmiyor = None
 
 
         # Zamansal doğruluk
      
         vk_zamansal = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_zamansal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
-        self.vt_var = 0
-        self.vt_yok = 0
-        self.vt_bilinmiyor = 0
+        self.vtz_var = 0
+        self.vtz_yok = 0
+        self.vtz_bilinmiyor = 0
 
         for row in vk_zamansal:
             if row[1] == 2:
-                self.vt_var += 1
+                self.vtz_var += 1
             elif row[1] == 1:
-                self.vt_yok += 1
+                self.vtz_yok += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
-        if self.vt_var == 0:
-            self.vt_var = None
-        if self.vt_yok == 0:
-            self.vt_yok = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+                self.vtz_bilinmiyor += 1
+        if self.vtz_var == 0:
+            self.vtz_var = None
+        if self.vtz_yok == 0:
+            self.vtz_yok = None
+        if self.vtz_bilinmiyor == 0:
+            self.vtz_bilinmiyor = None
 
 
         # Tematik Doğruluk
      
         vk_tematik = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_tematik_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
-        self.vt_var = 0
-        self.vt_yok = 0
-        self.vt_bilinmiyor = 0
+        self.vtt_var = 0
+        self.vtt_yok = 0
+        self.vtt_bilinmiyor = 0
 
         for row in vk_tematik:
             if row[1] == 2:
-                self.vt_var += 1
+                self.vtt_var += 1
             elif row[1] == 1:
-                self.vt_yok += 1
+                self.vtt_yok += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
-        if self.vt_var == 0:
-            self.vt_var = None
-        if self.vt_yok == 0:
-            self.vt_yok = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+                self.vtt_bilinmiyor += 1
+        if self.vtt_var == 0:
+            self.vtt_var = None
+        if self.vtt_yok == 0:
+            self.vtt_yok = None
+        if self.vtt_bilinmiyor == 0:
+            self.vtt_bilinmiyor = None
 
 
          # Verilerin Güncel Olma Durumu
@@ -197,7 +200,7 @@ class KurumTablosu:
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
         self.vt_guncel = 0
         self.vt_guncel_degil = 0
-        self.vt_bilinmiyor = 0
+        self.vtv_bilinmiyor = 0
 
         for row in vk_guncel:
             if row[1] == 2:
@@ -205,13 +208,13 @@ class KurumTablosu:
             elif row[1] == 1:
                 self.vt_guncel_degil += 1
             elif row[1] == None:
-                self.vt_bilinmiyor += 1
+                self.vtv_bilinmiyor += 1
         if self.vt_guncel == 0:
             self.vt_guncel = None
         if self.vt_guncel_degil == 0:
             self.vt_guncel_degil = None
-        if self.vt_bilinmiyor == 0:
-            self.vt_bilinmiyor = None
+        if self.vtv_bilinmiyor == 0:
+            self.vtv_bilinmiyor = None
 
         # WebServis Durumu
 
@@ -436,7 +439,7 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = [u'Eksik', u'Tam', u'Bilinmiyor']
         data = [
-            [self.vt_eksik, self.vt_tam, self.vt_bilinmiyor]
+            [self.vt_eksik, self.vt_tam, self.vte_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
@@ -482,7 +485,7 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = [u'Var', u'Yok', u'Bilinmiyor']
         data = [
-            [self.vt_var, self.vt_yok, self.vt_bilinmiyor]
+            [self.vtm_var, self.vtm_yok, self.vtm_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
@@ -526,9 +529,9 @@ class KurumTablosu:
         bold = wb.add_format({'bold': 1})
 
         # Add the worksheet data that the charts will refer to.
-        headings = [u'1m Altı', u'1m Üstü', u'Bilinmiyor']
+        headings = [u'1m ve Altı', u'1m Üstü', u'Bilinmiyor']
         data = [
-            [self.vt_malti, self.vt_mustu, self.vt_bilinmiyor]
+            [self.vt_malti, self.vt_mustu, self.vtk_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
@@ -574,7 +577,7 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = [u'Var', u'Yok', u'Bilinmiyor']
         data = [
-            [self.vt_var, self.vt_yok, self.vt_bilinmiyor]
+            [self.vtz_var, self.vtz_yok, self.vtz_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
@@ -620,7 +623,7 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = [u'Var', u'Yok', u'Bilinmiyor']
         data = [
-            [self.vt_var, self.vt_yok, self.vt_bilinmiyor]
+            [self.vtt_var, self.vtt_yok, self.vtt_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
@@ -666,7 +669,7 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = [u'Güncel', u'Güncel Değil', u'Bilinmiyor']
         data = [
-            [self.vt_guncel, self.vt_guncel_degil, self.vt_bilinmiyor]
+            [self.vt_guncel, self.vt_guncel_degil, self.vtv_bilinmiyor]
         ]
 
         ws.write_row('A1', headings, bold)
