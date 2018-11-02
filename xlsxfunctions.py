@@ -6,10 +6,13 @@ cnn = Connection()
 
 class KurumTablosu:
     def __init__(self, oid):
+
+        
+
         self.oid = oid
         self.k_adi = cnn.getSingledataByOid('kurum', 'k_adi', self.oid)
         self.wb = xlsxwriter.Workbook('created_excels\\'+self.k_adi.decode('utf-8')+'.xlsx')
-        self.ek2 = cnn.getsinglekoddata('ek_2_cografi_veri_analizi', 'objectid', 'kurum='+str(self.oid))
+        self.ek2 = cnn.getsinglekoddata('ek_2_cografi_veri_analizi', 'objectid', 'geodurum is true and kurum='+str(self.oid))
 
 
         # VeriTürü
