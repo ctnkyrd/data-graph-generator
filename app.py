@@ -16,6 +16,7 @@ sys.stdout.flush()
 sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
 
 for i in kurum:
+   
     a = xlsxfunctions.KurumTablosu(i[0])
     a.veri_turu()
     a.veriformati()

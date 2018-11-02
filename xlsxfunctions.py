@@ -12,7 +12,7 @@ class KurumTablosu:
         self.ek2 = cnn.getsinglekoddata('ek_2_cografi_veri_analizi', 'objectid', 'kurum='+str(self.oid))
 
 
-        # veri türü
+        # VeriTürü
         veriler = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, veri_turu',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
 
@@ -35,7 +35,7 @@ class KurumTablosu:
         if self.vt_bilinmiyor == 0:
             self.vt_bilinmiyor = None
 
-        # HATA VeriFormat
+        # VeriFormatı
 
         veriformati = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, veri_turu, veri_formati, veri_formati',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -76,10 +76,7 @@ class KurumTablosu:
         if self.vf_bilinmiyor == 0:
             self.vf_bilinmiyor = None
 
-
-
-
-        # veri eksiksizlik
+        # VeriEksiksizlik
      
         veri_eksiksizlik = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_eksizlik_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -102,7 +99,7 @@ class KurumTablosu:
             self.vte_bilinmiyor = None
 
 
-        # mantıksal tutarlılık 
+        # MantıksalTutarlılık 
      
         mantiksal_tutarlilik = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_mantiksal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -125,7 +122,7 @@ class KurumTablosu:
             self.vtm_bilinmiyor = None
 
 
-        # konumsal doğruluk
+        # KonumsalTutarlılık
      
         vk_konumsal = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_konumsal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -148,7 +145,7 @@ class KurumTablosu:
             self.vtk_bilinmiyor = None
 
 
-        # Zamansal doğruluk
+        # ZamansalTutarlılık
      
         vk_zamansal = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_zamansal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -171,7 +168,7 @@ class KurumTablosu:
             self.vtz_bilinmiyor = None
 
 
-        # Tematik Doğruluk
+        # TematikTutarlılık
      
         vk_tematik = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_tematik_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -194,7 +191,7 @@ class KurumTablosu:
             self.vtt_bilinmiyor = None
 
 
-         # Verilerin Güncel Olma Durumu
+        # VerilerinGüncelOlmaDurumu
      
         vk_guncel = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_zamansal_gecerlilik_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -216,7 +213,7 @@ class KurumTablosu:
         if self.vtv_bilinmiyor == 0:
             self.vtv_bilinmiyor = None
 
-        # WebServis Durumu
+        # WebServisDurumu
 
         vk_ogc = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, servis_wms_var, servis_wfs_var',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -248,7 +245,7 @@ class KurumTablosu:
         if self.wfs_n == 0:
             self.wfs_n = None
         
-        # projeksiyon ve datum
+        # ProjeksiyonveDatum
         self.projeksiyonDatum = []
         allDatum = cnn.getlistofdata('kod_ek_2_projeksiyon p, kod_ek_2_datum d', 'p.objectid, d.objectid', 'true')
         
@@ -257,10 +254,8 @@ class KurumTablosu:
 
         pd_projeksiyonDatum = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, projeksiyon, datum',
                                     'geodurum = true and katman_durumu is true and veri_tipi = 1 and ek_2='+str(self.ek2))
-        list_projeksiyon_datum = []
 
         # print self.k_adi.decode('utf-8')
-
 
         for row in pd_projeksiyonDatum:
             for en,datum in enumerate(pd_allDatum):
@@ -295,7 +290,8 @@ class KurumTablosu:
         # if len(last_pd) > 0:
         #     self.df = pd.DataFrame(data=data[0:,2:],index=data[1:,0],columns=data[0:,0:])
         
-         # Metaveri Durumu
+
+        # MetaveriDurumu
 
         metaveri = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, mv_metaveri_var, mv_standart',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
@@ -328,8 +324,7 @@ class KurumTablosu:
         wb = self.wb
         wb.close()
 
-# BasicGraph-Veri Türü 
-
+# BasicGraph - VeriTürü 
 
     def veri_turu(self):
         wb = self.wb
@@ -375,7 +370,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Veri Formatı 
+# StackedGraph - VeriFormatı 
 
 
     def veriformati(self):
@@ -428,7 +423,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('E1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Veri Eksiksizlik 
+# BasicGraph - VeriEksiksizlik 
 
     def veri_eksiksizlik(self):
         wb = self.wb
@@ -474,7 +469,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Mantıksal Tutarlılık
+# BasicGraph - MantıksalTutarlılık
 
     def mantiksal_tutarlilik(self):
         wb = self.wb
@@ -520,7 +515,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Konumsal Tutarlılık
+# BasicGraph - KonumsalTutarlılık
 
     def vk_konumsal(self):
         wb = self.wb
@@ -566,7 +561,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Zamansal Tutarlılık
+# BasicGraph - ZamansalTutarlılık
 
     def vk_zamansal(self):
         wb = self.wb
@@ -612,7 +607,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Tematik Tutarlılık
+# BasicGraph - TematikTutarlılık
 
     def vk_tematik(self):
         wb = self.wb
@@ -658,7 +653,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-Verilerin Güncel Olma Durumu
+# BasicGraph - VerilerinGüncelOlmaDurumu
 
     def vk_guncel(self):
         wb = self.wb
@@ -704,7 +699,7 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
 
-# BasicGraph-WebServis Durumu
+# StackedGraph - WebServisDurumu
 
     def vk_ogc(self):
         workbook = self.wb
@@ -751,12 +746,11 @@ class KurumTablosu:
         # Insert the chart into the worksheet (with an offset).
         worksheet.insert_chart('D1', chart3, {'x_offset': 0, 'y_offset': 0})
     
-# Basic Graph Projeksiyon ve Datum
+# StackedGraph - ProjeksiyonveDatum
     def projeksiyon_datum(self):
         wb = self.wb
         ws = wb.add_worksheet(u'ProjeksiyonDatum')
 
-        bold = wb.add_format({'bold': 1})
         result = self.result
         datum_position = {}
         max_colunm = 0
@@ -829,7 +823,7 @@ class KurumTablosu:
 
             # BasicGraph-Metaveri Durumu
 
-# basic graph metaveri
+# StackedGraph - Metaveri
     def metaveri(self):
         wb = self.wb
         ws = wb.add_worksheet(u'MetaveriDurum')
