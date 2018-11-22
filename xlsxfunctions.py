@@ -6,12 +6,21 @@ cnn = Connection()
 
 class KurumTablosu:
     def __init__(self, oid):
-
         
-
         self.oid = oid
         self.k_adi = cnn.getSingledataByOid('kurum', 'k_adi', self.oid)
-        self.wb = xlsxwriter.Workbook('created_excels\\'+self.k_adi.decode('utf-8')+'.xlsx')
+        excelPath = "created_graphs"
+        if os.path.isdir(unicode(excelPath)) is False:
+                try:
+                    os.makedirs(unicode(excelPath))
+                except Exception as e:
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    print(exc_type, fname, exc_tb.tb_lineno)
+
+        
+        
+        self.wb = xlsxwriter.Workbook(excelPath+"\\"+self.k_adi.decode('utf-8')+'.xlsx')
         self.ek2 = cnn.getsinglekoddata('ek_2_cografi_veri_analizi', 'objectid', 'geodurum is true and kurum='+str(self.oid))
 
         # VeriTürü
@@ -54,13 +63,13 @@ class KurumTablosu:
                 self.cad +=1
             elif row[3] == 13:
                 self.vf_excel += 1
-            elif row [3] in (12,14):
+            elif row [3] in (12,14,19):
                 if row[1] == 1:
                     self.raster_bas += 1
                 elif row[1] == 2:
                     self.raster_dij += 1
                 self.raster +=1
-            elif row [3] in (2,3,4,5,6,7,16):
+            elif row [3] in (2,3,4,5,6,7,16,17,18,20,21):
                 self.vt +=1
             elif row[3] in (1, 15) or row[3] is None:
                 self.vf_bilinmiyor += 1 
