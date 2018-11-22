@@ -2,6 +2,7 @@
 import xlsxwriter, sys, os, numpy
 import pandas as pd
 from pgget import Connection
+from collections import Counter
 cnn = Connection()
 
 class KurumTablosu:
@@ -141,8 +142,16 @@ class KurumTablosu:
 
         # KonumsalTutarlılık
      
-        vk_konumsal = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid, vk_konumsal_yeni',
+        vk_konumsal = cnn.getlistofdata('x_ek_2_tucbs_veri_katmani', 'objectid,vk_konumsal_yeni',
                                     'geodurum = true and katman_durumu is true and ek_2='+str(self.ek2))
+        
+        
+        # vk_konumsal_headings = cnn.getlistofdata('kod_ek_2_konumsal_dogruluk', 'objectid,kod', 'objectid>0')
+        self.vk_konumsal_list = []
+        for i in vk_konumsal:
+            self.vk_konumsal_list.append(i[1])
+
+        self.vk_konumsal_elements = Counter(self.vk_konumsal_list)
         self.vt_malti = 0
         self.vt_mustu = 0
         self.vtk_bilinmiyor = 0
@@ -539,33 +548,50 @@ class KurumTablosu:
         ws = wb.add_worksheet(u'KonumsalDogruluk')
 
         bold = wb.add_format({'bold': 1})
+        # kod tablosundaki değerlerin sayısı burayı geçmemeli eğer geçerse columns listi bu şekilde genişletilmelidir
+        coulumns = ['A', 'B', 'C', 'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U']
+        # create heading from values dynamically
+        headings = []
+        data = []
+        for i in self.vk_konumsal_elements:
+            if i != None:    
+                heading_name = cnn.getsinglekoddata('kod_ek_2_konumsal_dogruluk', 'kod', 'objectid='+str(i)).decode('utf-8')
+                data.append(self.vk_konumsal_elements[i])
+                headings.append(heading_name)
 
         # Add the worksheet data that the charts will refer to.
-        headings = [u'1m ve Altı', u'1m Üstü', u'Bilinmiyor']
-        data = [
-            [self.vt_malti, self.vt_mustu, self.vtk_bilinmiyor]
-        ]
+        
+        # data = [
+        #     [self.vt_malti, self.vt_mustu, self.vtk_bilinmiyor]
+        # ]
 
         ws.write_row('A1', headings, bold)
-        ws.write_row('A2', data[0])
+        ws.write_row('A2', data)
         #
         # Create a stacked chart sub-type.
         #
         chart2 = wb.add_chart({'type': 'column'})
 
+        lastChar = coulumns[len(headings)-1]
+        
+        chart2.add_series({
+            'categories': '=KonumsalDogruluk!$A$1:$'+lastChar+'$1',
+            'values'    : '=KonumsalDogruluk!$A$2:$'+lastChar+'$2',
+        })
+
         # Configure the first series.
-        if self.vtk_bilinmiyor == None:
-            chart2.add_series({
-                'categories': '=KonumsalDogruluk!$A$1:$B$1',
-                'values':     '=KonumsalDogruluk!$A$2:$B$2',
-                'data_labels': {'value': True},
-            })
-        else:
-            chart2.add_series({
-                'categories': '=KonumsalDogruluk!$A$1:$C$1',
-                'values':     '=KonumsalDogruluk!$A$2:$C$2',
-                'data_labels': {'value': True},
-            })
+        # if self.vtk_bilinmiyor == None:
+        #     chart2.add_series({
+        #         'categories': '=KonumsalDogruluk!$A$1:$B$1',
+        #         'values':     '=KonumsalDogruluk!$A$2:$B$2',
+        #         'data_labels': {'value': True},
+        #     })
+        # else:
+        #     chart2.add_series({
+        #         'categories': '=KonumsalDogruluk!$A$1:$C$1',
+        #         'values':     '=KonumsalDogruluk!$A$2:$C$2',
+        #         'data_labels': {'value': True},
+        #     })
 
         # Add a chart title and some axis labels.
         chart2.set_title ({'name': u'Konumsal Doğruluk'})
@@ -576,7 +602,7 @@ class KurumTablosu:
         chart2.set_style(12)
 
         # Insert the chart into the worksheet (with an offset).
-        ws.insert_chart('D1', chart2, {'x_offset': 0, 'y_offset': 0})
+        ws.insert_chart('A5', chart2, {'x_offset': 0, 'y_offset': 0})
 
 # BasicGraph - ZamansalTutarlılık
 
