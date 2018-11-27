@@ -577,6 +577,7 @@ class KurumTablosu:
         chart2.add_series({
             'categories': '=KonumsalDogruluk!$A$1:$'+lastChar+'$1',
             'values'    : '=KonumsalDogruluk!$A$2:$'+lastChar+'$2',
+            'data_labels': {'value': True},
         })
 
         # Configure the first series.
