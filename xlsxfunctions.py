@@ -58,6 +58,7 @@ class KurumTablosu:
         self.raster_bas = 0
         self.raster_dij = 0
         self.vf_bilinmiyor = 0
+        self.vf_kmlKmz = 0
 
         for row in veriformati:
             if row [3] in (8,9,10,11):
@@ -70,10 +71,12 @@ class KurumTablosu:
                 elif row[1] == 2:
                     self.raster_dij += 1
                 self.raster +=1
-            elif row [3] in (2,3,4,5,6,7,16,17,18,20,21):
+            elif row [3] in (2,3,4,5,6,7,16,18,20,21):
                 self.vt +=1
             elif row[3] in (1, 15) or row[3] is None:
                 self.vf_bilinmiyor += 1 
+            elif row[3] == 17:
+                self.vf_kmlKmz += 1
             
         if self.cad == 0:
             self.cad = None
@@ -93,6 +96,8 @@ class KurumTablosu:
         
         if self.vf_bilinmiyor == 0:
             self.vf_bilinmiyor = None
+        if self.vf_kmlKmz == 0:
+            self.vf_kmlKmz = None
 
         # VeriEksiksizlik
      
@@ -228,7 +233,7 @@ class KurumTablosu:
         for row in vk_guncel:
             if row[1] == 1:
                 self.vt_guncel += 1
-            elif row[1] == 2:
+            elif row[1] == 2 or row[1] == 4:
                 self.vt_guncel_degil += 1
             elif row[1] == None or row[1] == 3:
                 self.vtv_bilinmiyor += 1
@@ -408,9 +413,9 @@ class KurumTablosu:
         # Add the worksheet data that the charts will refer to.
         headings = ['Veri', u'Dijital Veri', u'Basılı Veri']
         data = [
-            ['NCZ, DWG', 'Raster', u'Veritabanı',u'Excel-Word', 'Bilinmiyor'],
-            [self.cad, self.raster_dij, self.vt, self.vf_excel, self.vf_bilinmiyor],
-            [None, self.raster_bas, None, None, None],
+            ['NCZ, DWG', 'Raster', u'Veritabanı',u'Excel-Word', u'KML-KMZ',u'Bilinmiyor'],
+            [self.cad, self.raster_dij, self.vt, self.vf_excel, self.vf_kmlKmz,self.vf_bilinmiyor],
+            [None, self.raster_bas, None, None, None,None],
         ]
 
         ws.write_row('A1', headings, bold)
@@ -425,16 +430,16 @@ class KurumTablosu:
         # Configure the first series.
         chart2.add_series({
             'name':       '=VeriFormati!$B$1',
-            'categories': '=VeriFormati!$A$2:$A$6',
-            'values':     '=VeriFormati!$B$2:$B$6',
+            'categories': '=VeriFormati!$A$2:$A$7',
+            'values':     '=VeriFormati!$B$2:$B$7',
             'data_labels': {'value': True},
         })
 
         # Configure second series.
         chart2.add_series({
             'name':       '=VeriFormati!$C$1',
-            'categories': '=VeriFormati!$A$2:$A$6',
-            'values':     '=VeriFormati!$C$2:$C$6',
+            'categories': '=VeriFormati!$A$2:$A$7',
+            'values':     '=VeriFormati!$C$2:$C$7',
             'data_labels': {'value': True},
         })
 
